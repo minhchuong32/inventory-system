@@ -1,0 +1,303 @@
+<!doctype html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout/base :: layout(~{::title/text()}, ~{::main}, 'products')}"
+>
+  <head>
+    <title>Sản phẩm</title>
+  </head>
+  <body>
+    <main>
+      <!-- STATS SECTION -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <i class="bi bi-box"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" th:text="${products.totalElements}">
+              1,248
+            </div>
+            <div class="stat-label">Tổng sản phẩm</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon cyan">
+            <i class="bi bi-lightning-fill"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">1,202</div>
+            <div class="stat-label">Đang hoạt động</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Báo hiếu hàng</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <i class="bi bi-cash-coin"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">840.5M</div>
+            <div class="stat-label">Tổng giá trị</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER & SEARCH SECTION -->
+      <div class="card">
+        <div
+          class="card-body"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+          "
+        >
+          <div style="display: flex; gap: 12px; align-items: center">
+            <div style="display: flex; align-items: center; gap: 6px">
+              <label
+                style="
+                  font-size: 13px;
+                  font-weight: 500;
+                  color: #555;
+                  margin: 0;
+                "
+                >Danh mục:</label
+              >
+              <select class="form-select" style="width: 160px; font-size: 13px">
+                <option value="">Tất cả</option>
+                <option value="ELECTRONICS">Điện tử</option>
+                <option value="MECHANICAL">Cơ khí</option>
+                <option value="FURNITURE">Nội thất</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px">
+              <label
+                style="
+                  font-size: 13px;
+                  font-weight: 500;
+                  color: #555;
+                  margin: 0;
+                "
+                >Tình trạng:</label
+              >
+              <select class="form-select" style="width: 140px; font-size: 13px">
+                <option value="">Tất cả</option>
+                <option value="ACTIVE">Hoạt động</option>
+                <option value="INACTIVE">Ngừng</option>
+                <option value="LOW_STOCK">Hàng ít</option>
+              </select>
+            </div>
+          </div>
+          <a
+            href="#"
+            class="btn-sm-action"
+            style="background: #e3f2fd; color: #1565c0; padding: 6px 12px"
+          >
+            <i class="bi bi-funnel"></i> Bộ lọc nâng cao
+          </a>
+        </div>
+
+        <!-- TABLE SECTION -->
+        <div class="table-wrapper">
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>MÃ SP</th>
+                <th>TÊN SẢN PHẨM</th>
+                <th>DANH MỤC</th>
+                <th>ĐƠN VỊ</th>
+                <th>GIÁ NHẬP</th>
+                <th>GIÁ BÁN</th>
+                <th>TỒN KHO</th>
+                <th>TRẠNG THÁI</th>
+                <th>THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${products.empty}">
+                <td
+                  colspan="10"
+                  style="text-align: center; padding: 40px; color: #aaa"
+                >
+                  <i
+                    class="bi bi-inbox"
+                    style="font-size: 32px; display: block"
+                  ></i>
+                  <br />Không có sản phẩm nào
+                </td>
+              </tr>
+              <tr th:each="p,stat : ${products.content}">
+                <td style="color: #aaa; font-size: 12px; text-align: center">
+                  <strong
+                    th:text="${products.number*products.size+stat.index+1}"
+                  ></strong>
+                </td>
+                <td>
+                  <div
+                    style="font-weight: 600; font-size: 13px; color: #1a237e"
+                    th:text="${p.code ?: '—'}"
+                  ></div>
+                </td>
+                <td>
+                  <div>
+                    <div
+                      style="font-weight: 600; color: #333; font-size: 13px"
+                      th:text="${p.name}"
+                    ></div>
+                    <div
+                      style="font-size: 11px; color: #aaa"
+                      th:text="${p.description != null ? (p.description.length() > 40 ? p.description.substring(0, 40) + '...' : p.description) : '—'}"
+                    ></div>
+                  </div>
+                </td>
+                <td>
+                  <span
+                    style="font-size: 13px; color: #666"
+                    th:text="${p.categoryName ?: '—'}"
+                  ></span>
+                </td>
+                <td>
+                  <span
+                    style="font-size: 13px; color: #666"
+                    th:text="${p.unitName ?: '—'}"
+                  ></span>
+                </td>
+                <td>
+                  <span
+                    style="font-size: 13px; color: #666"
+                    th:text="${#numbers.formatDecimal(p.costPrice,0,'COMMA',0,'POINT')+' ₫'}"
+                  ></span>
+                </td>
+                <td>
+                  <span
+                    style="font-size: 13px; color: #2e7d32; font-weight: 600"
+                    th:text="${#numbers.formatDecimal(p.sellPrice,0,'COMMA',0,'POINT')} + ' ₫'"
+                  ></span>
+                </td>
+                <td>
+                  <span
+                    style="
+                      font-size: 13px;
+                      font-weight: 600;
+                      text-align: center;
+                      display: block;
+                    "
+                    th:classappend="${p.quantity <= 0 ? 'text-danger' : (p.quantity <= 10 ? 'text-warning' : 'text-success')}"
+                    th:text="${p.quantity}"
+                  ></span>
+                </td>
+                <td>
+                  <span th:if="${p.status}" class="badge-status badge-active"
+                    >Hoạt động</span
+                  >
+                  <span
+                    th:unless="${p.status}"
+                    class="badge-status badge-inactive"
+                    >Ngừng</span
+                  >
+                </td>
+                <td style="text-align: center">
+                  <a
+                    th:href="@{/products/{id}/edit(id=${p.id})}"
+                    class="btn-sm-action btn-edit"
+                    title="Chỉnh sửa"
+                    ><i class="bi bi-pencil"></i
+                  ></a>
+                  <form
+                    th:action="@{/products/{id}/delete(id=${p.id})}"
+                    method="post"
+                    style="display: inline"
+                    onsubmit="return confirm('Xóa sản phẩm này?');"
+                  >
+                    <button
+                      type="submit"
+                      class="btn-sm-action btn-delete"
+                      title="Xóa"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINATION SECTION -->
+        <div class="pagination-wrapper">
+          <div style="font-size: 13px; color: #888">
+            Hiển thị <strong th:text="${products.numberOfElements}"></strong> /
+            <strong th:text="${products.totalElements}"></strong> sản phẩm
+          </div>
+          <nav th:if="${products.totalPages > 1}">
+            <ul class="pagination mb-0">
+              <li
+                class="page-item"
+                th:classappend="${products.first}?'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/products(page=${products.number-1},search=${search})}"
+                  ><i class="bi bi-chevron-left"></i
+                ></a>
+              </li>
+              <li
+                class="page-item"
+                th:each="i:${#numbers.sequence(0,products.totalPages-1)}"
+                th:classappend="${i==products.number}?'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/products(page=${i},search=${search})}"
+                  th:text="${i+1}"
+                ></a>
+              </li>
+              <li
+                class="page-item"
+                th:classappend="${products.last}?'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/products(page=${products.number+1},search=${search})}"
+                  ><i class="bi bi-chevron-right"></i
+                ></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- FOOTER ACTION BUTTON -->
+      <div style="position: fixed; bottom: 30px; right: 30px">
+        <a
+          th:href="@{/products/new}"
+          class="btn-primary-custom"
+          style="
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.3);
+            font-size: 24px;
+          "
+        >
+          <i class="bi bi-plus"></i>
+        </a>
+      </div>
+    </main>
+  </body>
+</html>
