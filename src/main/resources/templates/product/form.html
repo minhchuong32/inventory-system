@@ -1,0 +1,345 @@
+<!doctype html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout/base :: layout(~{::title/text()}, ~{::main}, 'products')}"
+>
+  <head>
+    <title
+      th:text="${product.id != null} ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm'"
+    ></title>
+  </head>
+  <body>
+    <main>
+      <div class="card">
+        <div class="card-header">
+          <h6 class="card-title">
+            <i class="bi bi-box"></i>
+            <span
+              th:text="${product.id != null} ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'"
+            ></span>
+          </h6>
+          <a
+            th:href="@{/products}"
+            class="btn-sm-action"
+            style="background: #f5f5f5; color: #666"
+          >
+            <i class="bi bi-arrow-left"></i> Quay lại
+          </a>
+        </div>
+
+        <form
+          th:action="@{/products/save}"
+          method="post"
+          th:object="${product}"
+          class="card-body"
+        >
+          <input type="hidden" th:field="*{id}" />
+
+          <div>
+            <!-- FORM FIELDS -->
+            <div>
+              <!-- PRODUCT INFO SECTION -->
+              <div class="form-section">
+                <div class="form-section-title">
+                  <i class="bi bi-info-circle"></i> Thông tin chung
+                </div>
+
+                <!-- Code -->
+                <div class="mb-3" th:if="${product.id != null}">
+                  <label class="form-label">Mã sản phẩm</label>
+                  <input
+                    type="text"
+                    th:field="*{code}"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+
+                <!-- Name -->
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Tên sản phẩm <span style="color: #c62828">*</span></label
+                  >
+                  <input
+                    type="text"
+                    th:field="*{name}"
+                    class="form-control"
+                    placeholder='VD: Màn hình Dell UltraSharp 27"'
+                    required
+                  />
+                  <div
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('name')}"
+                    th:errors="*{name}"
+                  ></div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                  <label class="form-label">Mô tả</label>
+                  <textarea
+                    th:field="*{description}"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Mô tả chi tiết sản phẩm..."
+                  ></textarea>
+                </div>
+
+                <!-- Category -->
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Danh mục <span style="color: #c62828">*</span></label
+                  >
+                  <select th:field="*{category}" class="form-select" required>
+                    <option value="">-- Chọn danh mục --</option>
+                    <option
+                      th:each="cat : ${categories}"
+                      th:value="${cat.id}"
+                      th:text="${cat.name}"
+                    >
+                      Danh mục
+                    </option>
+                  </select>
+                  <div
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('category')}"
+                    th:errors="*{category}"
+                  ></div>
+                </div>
+
+                <!-- Unit -->
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Đơn vị tính <span style="color: #c62828">*</span></label
+                  >
+                  <select th:field="*{unit}" class="form-select" required>
+                    <option value="">-- Chọn đơn vị --</option>
+                    <option
+                      th:each="u : ${units}"
+                      th:value="${u.id}"
+                      th:text="${u.name}"
+                    >
+                      Đơn vị
+                    </option>
+                  </select>
+                  <div
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('unit')}"
+                    th:errors="*{unit}"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- PRICING SECTION -->
+              <div class="form-section">
+                <div class="form-section-title">
+                  <i class="bi bi-cash-coin"></i> Giá cả
+                </div>
+
+                <!-- Cost Price -->
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Giá nhập (₫) <span style="color: #c62828">*</span></label
+                  >
+                  <input
+                    type="number"
+                    th:field="*{costPrice}"
+                    class="form-control"
+                    placeholder="0"
+                    min="0"
+                    step="1000"
+                    required
+                  />
+                  <div
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('costPrice')}"
+                    th:errors="*{costPrice}"
+                  ></div>
+                </div>
+
+                <!-- Selling Price -->
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Giá bán (₫) <span style="color: #c62828">*</span></label
+                  >
+                  <input
+                    type="number"
+                    th:field="*{sellPrice}"
+                    class="form-control"
+                    placeholder="0"
+                    min="0"
+                    step="1000"
+                    required
+                  />
+                  <div
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('sellPrice')}"
+                    th:errors="*{sellPrice}"
+                  ></div>
+                </div>
+
+                <!-- Profit Display -->
+                <div
+                  style="
+                    background: #f0f0f0;
+                    padding: 12px;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    color: #555;
+                  "
+                >
+                  <div>
+                    Lợi nhuận:
+                    <strong style="color: #2e7d32" id="profit">0 ₫</strong>
+                  </div>
+                  <div>
+                    Tỷ suất:
+                    <strong style="color: #2e7d32" id="profitPercent"
+                      >0%</strong
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- STOCK SECTION -->
+              <div class="form-section">
+                <div class="form-section-title">
+                  <i class="bi bi-box2"></i> Tồn kho
+                </div>
+
+                <!-- Quantity -->
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Số lượng tồn <span style="color: #c62828">*</span></label
+                  >
+                  <input
+                    type="number"
+                    th:field="*{quantity}"
+                    class="form-control"
+                    placeholder="0"
+                    min="0"
+                    required
+                  />
+                  <div
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('quantity')}"
+                    th:errors="*{quantity}"
+                  ></div>
+                </div>
+
+                <!-- Min Stock -->
+                <div class="mb-3">
+                  <label class="form-label">Tồn kho tối thiểu</label>
+                  <input
+                    type="number"
+                    th:field="*{minQuantity}"
+                    class="form-control"
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+
+                <!-- Max Stock -->
+                <div class="mb-3">
+                  <label class="form-label">Tồn kho tối đa</label>
+                  <input
+                    type="number"
+                    th:field="*{maxQuantity}"
+                    class="form-control"
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <!-- STATUS SECTION -->
+              <div class="form-section">
+                <div class="form-section-title">
+                  <i class="bi bi-toggle-on"></i> Trạng thái
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <input
+                    type="checkbox"
+                    th:field="*{status}"
+                    id="productStatus"
+                    class="form-check-input"
+                    style="width: 20px; height: 20px; cursor: pointer"
+                  />
+                  <label
+                    for="productStatus"
+                    style="
+                      margin: 0;
+                      cursor: pointer;
+                      font-size: 13px;
+                      color: #555;
+                    "
+                  >
+                    Hoạt động
+                  </label>
+                </div>
+              </div>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div
+            style="
+              display: flex;
+              gap: 12px;
+              justify-content: flex-end;
+              padding-top: 20px;
+              border-top: 1px solid #f0f0f0;
+              margin-top: 20px;
+            "
+          >
+            <a th:href="@{/products}" class="btn btn-light">
+              <i class="bi bi-x-lg"></i> Hủy
+            </a>
+            <button type="submit" class="btn-primary-custom">
+              <i class="bi bi-check-lg"></i>
+              <span
+                th:text="${product.id != null} ? 'Cập nhật' : 'Thêm mới'"
+              ></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      // Calculate profit when prices change
+      function updateProfit() {
+        const costPrice =
+          parseFloat(document.querySelector('input[name="costPrice"]').value) ||
+          0;
+        const sellingPrice =
+          parseFloat(document.querySelector('input[name="sellPrice"]').value) ||
+          0;
+
+        const profit = sellingPrice - costPrice;
+        const profitPercent =
+          costPrice > 0 ? ((profit / costPrice) * 100).toFixed(1) : 0;
+
+        document.getElementById("profit").textContent =
+          profit.toLocaleString("vi-VN", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }) + " ₫";
+        document.getElementById("profitPercent").textContent =
+          profitPercent + "%";
+      }
+
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        updateProfit();
+        document
+          .querySelector('input[name="costPrice"]')
+          .addEventListener("input", updateProfit);
+        document
+          .querySelector('input[name="sellPrice"]')
+          .addEventListener("input", updateProfit);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+services:
+  # 1. DATABASE
+  inventory-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: inventory-sqlserver
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Inventory@2026"
+      MSSQL_PID: "Developer"
+      MSSQL_ENFORCE_PASSWORD_POLICY: "off"
+    ports:
+      - "1434:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      # Sử dụng sqlcmd để kiểm tra xem SQL Server thực sự đã sẵn sàng chưa
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools18/bin/sqlcmd",
+          "-S",
+          "localhost",
+          "-U",
+          "sa",
+          "-P",
+          "Inventory@2026",
+          "-Q",
+          "SELECT 1",
+          "-C",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10 # Tăng số lần thử vì SQL Server khởi động khá chậm
+
+  # 2. SPRING BOOT APP
+  inventory-app:
+    build: .
+    container_name: inventory-system-app
+    ports:
+      - "8080:8080"
+    environment:
+      # QUAN TRỌNG: Hostname 'inventory-sqlserver' phải khớp với tên service ở trên
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://inventory-sqlserver:1433;databaseName=master;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: Inventory@2026
+      # Thêm dòng này để Hibernate tự tạo bảng nếu chưa có
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      inventory-sqlserver:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  sqlserver_data:

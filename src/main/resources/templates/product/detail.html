@@ -1,0 +1,283 @@
+<!doctype html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout/base :: layout(~{::title/text()}, ~{::main}, 'products')}"
+>
+  <head>
+    <title>Chi tiết sản phẩm</title>
+  </head>
+  <body>
+    <main>
+      <div class="card">
+        <div class="card-header">
+          <h6 class="card-title">
+            <i class="bi bi-box"></i> Chi tiết sản phẩm
+          </h6>
+          <div style="display: flex; gap: 8px">
+            <a
+              th:href="@{/products/{id}/edit(id=${product.id})}"
+              class="btn-sm-action btn-edit"
+            >
+              <i class="bi bi-pencil"></i> Chỉnh sửa
+            </a>
+            <a
+              th:href="@{/products}"
+              class="btn-sm-action"
+              style="background: #f5f5f5; color: #666"
+            >
+              <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div
+            style="display: grid; grid-template-columns: 250px 1fr; gap: 32px"
+          >
+            <!-- IMAGE SECTION -->
+            <div>
+              <div
+                style="
+                  width: 100%;
+                  aspect-ratio: 1;
+                  background: #f5f5f5;
+                  border-radius: 12px;
+                  overflow: hidden;
+                  border: 1px solid #e8eaf6;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-bottom: 16px;
+                "
+              >
+                <img
+                  th:if="${product.imageUrl}"
+                  th:src="${product.imageUrl}"
+                  style="width: 100%; height: 100%; object-fit: cover"
+                />
+                <div
+                  th:unless="${product.imageUrl}"
+                  style="text-align: center; color: #aaa"
+                >
+                  <i
+                    class="bi bi-image"
+                    style="font-size: 48px; display: block"
+                  ></i>
+                  <span>Không có hình ảnh</span>
+                </div>
+              </div>
+              <div
+                style="font-size: 12px; color: #888; text-align: center"
+                th:if="${product.imageName}"
+              >
+                <i class="bi bi-check-circle" style="color: #2e7d32"></i>
+                <span th:text="${product.imageName}"></span>
+              </div>
+            </div>
+
+            <!-- INFO SECTION -->
+            <div>
+              <!-- HEADER INFO -->
+              <div
+                style="
+                  margin-bottom: 24px;
+                  padding-bottom: 16px;
+                  border-bottom: 1px solid #f0f0f0;
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: space-between;
+                    margin-bottom: 12px;
+                  "
+                >
+                  <div>
+                    <div
+                      style="font-size: 12px; color: #aaa; margin-bottom: 4px"
+                      th:text="${product.code}"
+                    ></div>
+                    <h4
+                      style="
+                        margin: 0;
+                        font-size: 22px;
+                        font-weight: 700;
+                        color: #1a1a2e;
+                      "
+                      th:text="${product.name}"
+                    ></h4>
+                  </div>
+                  <span
+                    th:if="${product.status}"
+                    class="badge-status badge-active"
+                    >Hoạt động</span
+                  >
+                  <span
+                    th:unless="${product.status}"
+                    class="badge-status badge-inactive"
+                    >Ngừng</span
+                  >
+                </div>
+                <p
+                  style="color: #666; font-size: 13px; margin: 0"
+                  th:text="${product.description}"
+                ></p>
+              </div>
+
+              <!-- GRID INFO -->
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 16px;
+                  margin-bottom: 24px;
+                "
+              >
+                <!-- Danh mục -->
+                <div class="mini-stat-card">
+                  <div class="mini-label">Danh mục</div>
+                  <div
+                    style="font-size: 14px; color: #555; font-weight: 500"
+                    th:text="${product.category}"
+                  ></div>
+                </div>
+
+                <!-- Đơn vị -->
+                <div class="mini-stat-card">
+                  <div class="mini-label">Đơn vị tính</div>
+                  <div
+                    style="font-size: 14px; color: #555; font-weight: 500"
+                    th:text="${product.unit}"
+                  ></div>
+                </div>
+
+                <!-- Giá nhập -->
+                <div class="mini-stat-card">
+                  <div class="mini-label">Giá nhập</div>
+                  <div
+                    class="mini-value"
+                    style="font-size: 18px"
+                    th:text="${#numbers.formatDecimal(product.costPrice,0,'COMMA',0,'POINT')+' ₫'}"
+                  ></div>
+                </div>
+
+                <!-- Giá bán -->
+                <div class="mini-stat-card">
+                  <div class="mini-label">Giá bán</div>
+                  <div
+                    class="mini-value"
+                    style="font-size: 18px; color: #2e7d32"
+                    th:text="${#numbers.formatDecimal(product.sellingPrice,0,'COMMA',0,'POINT')+' ₫'}"
+                  ></div>
+                </div>
+
+                <!-- Lợi nhuận -->
+                <div class="mini-stat-card">
+                  <div class="mini-label">Lợi nhuận</div>
+                  <div
+                    class="mini-value"
+                    style="font-size: 18px; color: #00acc1"
+                    th:text="${#numbers.formatDecimal(product.sellingPrice - product.costPrice,0,'COMMA',0,'POINT')+' ₫'}"
+                  ></div>
+                </div>
+
+                <!-- Tỷ suất -->
+                <div class="mini-stat-card">
+                  <div class="mini-label">Tỷ suất lợi nhuận</div>
+                  <div
+                    class="mini-value"
+                    style="font-size: 18px; color: #00acc1"
+                    th:text="${product.costPrice > 0 ? #numbers.formatDecimal(((product.sellingPrice - product.costPrice) / product.costPrice) * 100, 0, 'COMMA', 1, 'POINT') + '%' : '0%'}"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- STOCK INFO -->
+              <div
+                style="background: #f8f9ff; padding: 16px; border-radius: 10px"
+              >
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #1a237e;
+                    margin-bottom: 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                  "
+                >
+                  <i class="bi bi-box2"></i> Tồn kho
+                </div>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    gap: 12px;
+                  "
+                >
+                  <div
+                    style="
+                      background: white;
+                      padding: 12px;
+                      border-radius: 8px;
+                      border-left: 3px solid #2e7d32;
+                    "
+                  >
+                    <div
+                      style="font-size: 11px; color: #888; margin-bottom: 4px"
+                    >
+                      Số lượng tồn
+                    </div>
+                    <div
+                      style="font-size: 20px; font-weight: 700; color: #2e7d32"
+                      th:text="${product.quantity}"
+                    ></div>
+                  </div>
+                  <div
+                    style="
+                      background: white;
+                      padding: 12px;
+                      border-radius: 8px;
+                      border-left: 3px solid #f57f17;
+                    "
+                  >
+                    <div
+                      style="font-size: 11px; color: #888; margin-bottom: 4px"
+                    >
+                      Tồn kho tối thiểu
+                    </div>
+                    <div
+                      style="font-size: 20px; font-weight: 700; color: #f57f17"
+                      th:text="${product.minStock ?: '—'}"
+                    ></div>
+                  </div>
+                  <div
+                    style="
+                      background: white;
+                      padding: 12px;
+                      border-radius: 8px;
+                      border-left: 3px solid #00acc1;
+                    "
+                  >
+                    <div
+                      style="font-size: 11px; color: #888; margin-bottom: 4px"
+                    >
+                      Tồn kho tối đa
+                    </div>
+                    <div
+                      style="font-size: 20px; font-weight: 700; color: #00acc1"
+                      th:text="${product.maxStock ?: '—'}"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
