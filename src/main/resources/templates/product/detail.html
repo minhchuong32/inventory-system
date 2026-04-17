@@ -1,0 +1,239 @@
+<!doctype html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout/base :: layout(~{::title/text()}, ~{::main}, 'products')}"
+>
+  <head>
+    <title>Chi tiết sản phẩm</title>
+  </head>
+  <body>
+    <main>
+      <div class="detail-page-header">
+        <div>
+          <div class="detail-page-kicker">Thông tin sản phẩm</div>
+          <h2 class="detail-page-title" th:text="${product.name}">Sản phẩm</h2>
+          <div class="detail-page-subtitle">
+            <span th:text="${product.code}">SP001</span>
+            <span th:text="${product.stockStatus.displayName}">Đủ hàng</span>
+            <span th:text="${product.unitName ?: 'Chưa có đơn vị'}">Cái</span>
+          </div>
+        </div>
+        <div class="detail-page-actions">
+          <a
+            th:href="@{/products/{id}/edit(id=${product.id})}"
+            class="btn-sm-action btn-edit"
+          >
+            <i class="bi bi-pencil"></i> Chỉnh sửa
+          </a>
+          <a th:href="@{/products}" class="btn-sm-action detail-back-btn">
+            <i class="bi bi-arrow-left"></i> Quay lại
+          </a>
+        </div>
+      </div>
+
+      <div class="product-detail-grid">
+        <section class="card product-preview-card">
+          <div class="product-visual">
+            <div class="product-image-frame">
+              <img
+                th:if="${product.imageUrl}"
+                th:src="${product.imageUrl}"
+                alt="Ảnh sản phẩm"
+              />
+              <div th:unless="${product.imageUrl}" class="product-image-empty">
+                <i class="bi bi-image"></i>
+                <span>Chưa có ảnh sản phẩm</span>
+              </div>
+            </div>
+            <div class="product-visual-meta">
+              <div
+                class="stock-pill"
+                th:classappend="${product.stockStatus.cssClass}"
+              >
+                <i class="bi bi-activity"></i>
+                <span th:text="${product.stockStatus.displayName}"
+                  >Đủ hàng</span
+                >
+              </div>
+              <div
+                class="stock-caption"
+                th:text="${product.status ? 'Sản phẩm đang hoạt động' : 'Sản phẩm đã ngừng kinh doanh'}"
+              ></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card product-details-card">
+          <div class="card-body">
+            <div class="detail-section-title">
+              <i class="bi bi-card-text"></i>
+              <span>Thông tin chung</span>
+            </div>
+
+            <div class="detail-field-grid">
+              <div class="detail-field">
+                <div class="detail-field-label">Mã sản phẩm</div>
+                <div class="detail-field-value" th:text="${product.code}">
+                  SP001
+                </div>
+              </div>
+              <div class="detail-field">
+                <div class="detail-field-label">Trạng thái</div>
+                <div class="detail-field-value">
+                  <span
+                    th:if="${product.status}"
+                    class="badge-status badge-active"
+                    >Hoạt động</span
+                  >
+                  <span
+                    th:unless="${product.status}"
+                    class="badge-status badge-inactive"
+                    >Ngừng</span
+                  >
+                </div>
+              </div>
+              <div class="detail-field full-width">
+                <div class="detail-field-label">Danh mục</div>
+                <div
+                  class="detail-field-value"
+                  th:text="${product.categoryName ?: 'Chưa phân loại'}"
+                >
+                  Danh mục
+                </div>
+              </div>
+              <div class="detail-field full-width">
+                <div class="detail-field-label">Nhà cung cấp</div>
+                <div
+                  class="detail-field-value"
+                  th:text="${product.supplierName ?: 'Chưa gán nhà cung cấp'}"
+                >
+                  Nhà cung cấp
+                </div>
+              </div>
+              <div class="detail-field full-width">
+                <div class="detail-field-label">Đơn vị tính</div>
+                <div
+                  class="detail-field-value"
+                  th:text="${product.unitName ?: 'Chưa có đơn vị'}"
+                >
+                  Đơn vị
+                </div>
+              </div>
+              <div class="detail-field full-width">
+                <div class="detail-field-label">Kho lưu trữ</div>
+                <div
+                  class="detail-field-value"
+                  th:text="${product.warehouse != null ? product.warehouse.name : 'Chưa gán kho'}"
+                >
+                  Kho
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section-title mt-4">
+              <i class="bi bi-cash-coin"></i>
+              <span>Giá trị và tồn kho</span>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric-card metric-income">
+                <div class="metric-label">Giá nhập</div>
+                <div
+                  class="metric-value"
+                  th:text="${#numbers.formatDecimal(product.costPrice,0,'COMMA',0,'POINT') + ' ₫'}"
+                >
+                  0 ₫
+                </div>
+              </div>
+              <div class="metric-card metric-success">
+                <div class="metric-label">Giá bán</div>
+                <div
+                  class="metric-value"
+                  th:text="${#numbers.formatDecimal(product.sellPrice,0,'COMMA',0,'POINT') + ' ₫'}"
+                >
+                  0 ₫
+                </div>
+              </div>
+              <div class="metric-card metric-accent">
+                <div class="metric-label">Lợi nhuận</div>
+                <div
+                  class="metric-value"
+                  th:text="${#numbers.formatDecimal(product.sellPrice - product.costPrice,0,'COMMA',0,'POINT') + ' ₫'}"
+                >
+                  0 ₫
+                </div>
+              </div>
+              <div class="metric-card metric-warning">
+                <div class="metric-label">Tỷ suất</div>
+                <div
+                  class="metric-value"
+                  th:text="${product.costPrice > 0 ? #numbers.formatDecimal(((product.sellPrice - product.costPrice) / product.costPrice) * 100, 0, 'COMMA', 1, 'POINT') + '%' : '0%'}"
+                >
+                  0%
+                </div>
+              </div>
+            </div>
+
+            <div class="stock-grid">
+              <div class="stock-box stock-ok">
+                <div class="stock-box-label">Tồn hiện tại</div>
+                <div class="stock-box-value" th:text="${product.quantity}">
+                  0
+                </div>
+              </div>
+              <div class="stock-box stock-low">
+                <div class="stock-box-label">Ngưỡng sắp hết</div>
+                <div class="stock-box-value" th:text="${product.minQuantity}">
+                  0
+                </div>
+              </div>
+              <div class="stock-box stock-max">
+                <div class="stock-box-label">Tồn tối đa</div>
+                <div class="stock-box-value" th:text="${product.maxQuantity}">
+                  0
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section-title mt-4">
+              <i class="bi bi-chat-left-text"></i>
+              <span>Mô tả</span>
+            </div>
+            <div
+              class="detail-notice"
+              th:text="${product.description ?: 'Chưa có mô tả cho sản phẩm này.'}"
+            >
+              Mô tả
+            </div>
+
+            <div class="detail-section-title mt-4">
+              <i class="bi bi-clock-history"></i>
+              <span>Thông tin hệ thống</span>
+            </div>
+            <div class="detail-meta-grid">
+              <div>
+                <div class="detail-field-label">Tạo lúc</div>
+                <div
+                  class="detail-field-value"
+                  th:text="${product.createdAt != null ? #temporals.format(product.createdAt, 'dd/MM/yyyy HH:mm') : '—'}"
+                >
+                  —
+                </div>
+              </div>
+              <div>
+                <div class="detail-field-label">Cập nhật lúc</div>
+                <div
+                  class="detail-field-value"
+                  th:text="${product.updatedAt != null ? #temporals.format(product.updatedAt, 'dd/MM/yyyy HH:mm') : '—'}"
+                >
+                  —
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

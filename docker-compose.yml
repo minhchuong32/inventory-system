@@ -1,0 +1,72 @@
+services:
+  # 1. DATABASE
+  inventory-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: inventory-sqlserver
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_PID: "Developer"
+      MSSQL_ENFORCE_PASSWORD_POLICY: "off"
+    ports:
+      - "1434:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      # Sử dụng sqlcmd để kiểm tra xem SQL Server thực sự đã sẵn sàng chưa
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools18/bin/sqlcmd",
+          "-S",
+          "localhost",
+          "-U",
+          "sa",
+          "-P",
+          "${MSSQL_SA_PASSWORD}",
+          "-Q",
+          "SELECT 1",
+          "-C",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  # 2. SPRING BOOT APP
+  inventory-app:
+    build: .
+    container_name: inventory-system-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://inventory-sqlserver:1433;databaseName=master;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      # Thêm dòng này để Hibernate tự tạo bảng
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      inventory-sqlserver:
+        condition: service_healthy
+    restart: on-failure
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget --spider -q http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+
+  # 3. CYPRESS E2E TESTING
+  cypress:
+    image: cypress/included:latest
+    container_name: inventory-cypress
+    depends_on:
+      inventory-app:
+        condition: service_healthy
+    environment:
+      - CYPRESS_baseUrl=http://inventory-app:8080
+    volumes:
+      - ./cypress:/cypress
+      - ./cypress.config.js:/cypress.config.js
+
+volumes:
+  sqlserver_data:
