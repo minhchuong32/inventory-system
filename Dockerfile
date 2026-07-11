@@ -27,6 +27,6 @@ USER spring:spring
 COPY --from=build /app/target/InventorySystem-0.0.1-SNAPSHOT.jar app.jar
 
 # Tối ưu JVM: Thêm thông số để tránh container bị kill do thiếu RAM (OOM)
-ENTRYPOINT ["java", "-XX:+UseParallelGC", "-Xms256m", "-Xmx512m", "-Dfile.encoding=UTF-8", "-Duser.timezone=Asia/Ho_Chi_Minh", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseParallelGC", "-Xms128m", "-Xmx320m", "-Dfile.encoding=UTF-8", "-Duser.timezone=Asia/Ho_Chi_Minh", "-jar", "app.jar"]
 
 EXPOSE 8080
