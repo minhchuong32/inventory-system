@@ -18,28 +18,18 @@ public class DataSeederConfig {
             // 0. XÓA TOÀN BỘ DỮ LIỆU CŨ THEO THỨ TỰ (TỪ CON LÊN CHA)
             // ======================================================
             String deleteDataSql = """
-                    -- 1. Xóa các bảng giao dịch và chi tiết (Leaf tables)
-                    DELETE FROM stock_movements;
-                    DELETE FROM export_details;
-                    DELETE FROM export_orders;
-                    DELETE FROM import_details;
-                    DELETE FROM import_orders;
-                    
-                    -- 2. Xóa sản phẩm
-                    DELETE FROM products;
-                    
-                    -- 3. Xóa các danh mục từ điển và đối tác
-                    DELETE FROM customers;
-                    DELETE FROM suppliers;
-                    DELETE FROM warehouses;
-                    DELETE FROM units;
-                    
-                    -- 4. Xử lý xóa categories (bảng này có tự tham chiếu parent_category_id)
-                    UPDATE categories SET parent_category_id = NULL;
-                    DELETE FROM categories;
-                    
-                    -- 5. Xóa người dùng hệ thống
-                    DELETE FROM app_users;
+                    TRUNCATE TABLE stock_movements RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE export_details RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE export_orders RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE import_details RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE import_orders RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE products RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE customers RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE suppliers RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE warehouses RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE units RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE categories RESTART IDENTITY CASCADE;
+                    TRUNCATE TABLE app_users RESTART IDENTITY CASCADE;
                     """;
 
             try {
