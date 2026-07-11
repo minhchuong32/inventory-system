@@ -51,7 +51,7 @@ public class ExportServiceImpl extends AbstractOrderPublisher implements ExportS
     @Transactional(readOnly = true)
     public Page<ExportOrder> findAll(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String kw = (keyword != null && !keyword.isBlank()) ? "%" + keyword.trim().toLowerCase() + "%" : null;
         return kw != null ? exportOrderRepository.searchOrders(kw, pageable)
                 : exportOrderRepository.findAllOrdered(pageable);
     }

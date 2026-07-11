@@ -33,7 +33,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Transactional(readOnly = true)
     public Page<Supplier> findAll(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String kw = (keyword != null && !keyword.isBlank()) ? "%" + keyword.trim().toLowerCase() + "%" : null;
         return supplierRepository.searchSuppliers(kw, pageable);
     }
 

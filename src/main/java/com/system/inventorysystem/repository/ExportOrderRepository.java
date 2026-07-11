@@ -18,9 +18,9 @@ public interface ExportOrderRepository extends JpaRepository<ExportOrder, Long> 
     BigDecimal sumAmountByYearAndMonth(@Param("y") int year, @Param("m") int month);
 
     @Query(value = "SELECT DISTINCT e FROM ExportOrder e LEFT JOIN FETCH e.customer WHERE e.deleted=false AND " +
-                   "(:kw IS NULL OR LOWER(e.code) LIKE LOWER(CONCAT('%',:kw,'%'))) ORDER BY e.orderDate DESC, e.id DESC",
+                   "(:kw IS NULL OR LOWER(e.code) LIKE :kw) ORDER BY e.orderDate DESC, e.id DESC",
            countQuery = "SELECT COUNT(e) FROM ExportOrder e WHERE e.deleted=false AND " +
-                        "(:kw IS NULL OR LOWER(e.code) LIKE LOWER(CONCAT('%',:kw,'%')))")
+                        "(:kw IS NULL OR LOWER(e.code) LIKE :kw)")
     Page<ExportOrder> searchOrders(@Param("kw") String keyword, Pageable pageable);
 
     @Query(value = "SELECT DISTINCT e FROM ExportOrder e LEFT JOIN FETCH e.customer WHERE e.deleted=false ORDER BY e.orderDate DESC, e.id DESC",

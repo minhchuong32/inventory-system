@@ -17,7 +17,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
     long countByStatusTrueAndDeletedFalse();
 
     @Query("SELECT s FROM Supplier s WHERE s.deleted = false AND " +
-            "(:kw IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT('%',:kw,'%')) " +
-            "OR LOWER(s.code) LIKE LOWER(CONCAT('%',:kw,'%')))")
+            "(:kw IS NULL OR LOWER(s.name) LIKE :kw " +
+            "OR LOWER(s.code) LIKE :kw)")
     Page<Supplier> searchSuppliers(@Param("kw") String keyword, Pageable pageable);
 }

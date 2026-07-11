@@ -41,7 +41,7 @@ public class ImportServiceImpl extends AbstractOrderPublisher implements ImportS
     @Transactional(readOnly = true)
     public Page<ImportOrder> findAll(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String kw = (keyword != null && !keyword.isBlank()) ? "%" + keyword.trim().toLowerCase() + "%" : null;
         return kw != null
                 ? importOrderRepository.searchOrders(kw, pageable)
                 : importOrderRepository.findAllOrdered(pageable);

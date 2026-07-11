@@ -30,7 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional(readOnly = true)
     public Page<Customer> findAll(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String kw = (keyword != null && !keyword.isBlank()) ? "%" + keyword.trim().toLowerCase() + "%" : null;
         return customerRepository.searchCustomers(kw, pageable);
     }
 

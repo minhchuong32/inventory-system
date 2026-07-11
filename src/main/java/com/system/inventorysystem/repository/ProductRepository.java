@@ -58,12 +58,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.unit " +
            "WHERE p.deleted = false AND " +
-           "(:kw IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%',:kw,'%')) " +
-           "OR LOWER(p.code) LIKE LOWER(CONCAT('%',:kw,'%')))",
+           "(:kw IS NULL OR LOWER(p.name) LIKE :kw " +
+           "OR LOWER(p.code) LIKE :kw)",
            countQuery = "SELECT COUNT(p) FROM Product p " +
            "WHERE p.deleted = false AND " +
-           "(:kw IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%',:kw,'%')) " +
-           "OR LOWER(p.code) LIKE LOWER(CONCAT('%',:kw,'%')))")
+           "(:kw IS NULL OR LOWER(p.name) LIKE :kw " +
+           "OR LOWER(p.code) LIKE :kw)")
     Page<Product> searchProducts(@Param("kw") String keyword, Pageable pageable);
 
     @Query("SELECT COALESCE(SUM(p.quantity * p.costPrice), 0) FROM Product p WHERE p.deleted = false AND p.status = true")

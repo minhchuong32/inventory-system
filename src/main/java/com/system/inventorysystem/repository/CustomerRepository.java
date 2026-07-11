@@ -19,9 +19,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     long countByStatusTrueAndDeletedFalse();
 
     @Query("SELECT c FROM Customer c WHERE c.deleted = false AND " +
-            "(:kw IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%',:kw,'%')) " +
-            "OR LOWER(c.code) LIKE LOWER(CONCAT('%',:kw,'%')) " +
-            "OR LOWER(c.phone) LIKE LOWER(CONCAT('%',:kw,'%')))")
+            "(:kw IS NULL OR LOWER(c.name) LIKE :kw " +
+            "OR LOWER(c.code) LIKE :kw " +
+            "OR LOWER(c.phone) LIKE :kw)")
     Page<Customer> searchCustomers(@Param("kw") String keyword, Pageable pageable);
 
     @Query("SELECT COUNT(c) FROM Customer c WHERE c.deleted=false")

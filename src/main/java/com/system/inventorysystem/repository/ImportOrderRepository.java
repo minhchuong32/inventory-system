@@ -18,9 +18,9 @@ public interface ImportOrderRepository extends JpaRepository<ImportOrder, Long> 
     BigDecimal sumAmountByYearAndMonth(@Param("y") int year, @Param("m") int month);
 
     @Query(value = "SELECT DISTINCT i FROM ImportOrder i LEFT JOIN FETCH i.supplier WHERE i.deleted=false AND " +
-                   "(:kw IS NULL OR LOWER(i.code) LIKE LOWER(CONCAT('%',:kw,'%'))) ORDER BY i.orderDate DESC, i.id DESC",
+                   "(:kw IS NULL OR LOWER(i.code) LIKE :kw) ORDER BY i.orderDate DESC, i.id DESC",
            countQuery = "SELECT COUNT(i) FROM ImportOrder i WHERE i.deleted=false AND " +
-                        "(:kw IS NULL OR LOWER(i.code) LIKE LOWER(CONCAT('%',:kw,'%')))")
+                        "(:kw IS NULL OR LOWER(i.code) LIKE :kw)")
     Page<ImportOrder> searchOrders(@Param("kw") String keyword, Pageable pageable);
 
     @Query(value = "SELECT DISTINCT i FROM ImportOrder i LEFT JOIN FETCH i.supplier WHERE i.deleted=false ORDER BY i.orderDate DESC, i.id DESC",
