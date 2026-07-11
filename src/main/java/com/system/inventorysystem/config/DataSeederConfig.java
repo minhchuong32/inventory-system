@@ -47,9 +47,9 @@ public class DataSeederConfig {
             
             String insertUserSql = """
                         INSERT INTO app_users
-                        (username, password, full_name, email, phone, role, status,
+                        (username, password, full_name, email, phone, role, status, auth_type,
                          created_at, created_by, updated_at, updated_by, deleted, refresh_token, last_login)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, 'system', false, NULL, NULL)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, 'NORMAL', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, 'system', false, NULL, NULL)
                     """;
 
             jdbcTemplate.update(insertUserSql, "admin", passwordEncoder.encode("123456"), "Quản trị viên",

@@ -71,6 +71,9 @@ public class GlobalExceptionHandler {
             if (ex instanceof IllegalArgumentException || ex instanceof IllegalStateException) {
                 status = HttpStatus.BAD_REQUEST;
                 errorName = "Bad Request";
+            } else if (ex instanceof AuthException) {
+                status = HttpStatus.BAD_REQUEST;
+                errorName = "Authentication Error";
             }
             ErrorResponse<Object> res = ErrorResponse.builder()
                     .statusCode(status.value())
@@ -80,6 +83,9 @@ public class GlobalExceptionHandler {
             return new ResponseEntity<>(res, status);
         }
         ra.addFlashAttribute("error", "Đã xảy ra lỗi: " + ex.getMessage());
+        if (ex instanceof AuthException) {
+            return "redirect:/auth/login";
+        }
         return "redirect:/dashboard";
     }
 
