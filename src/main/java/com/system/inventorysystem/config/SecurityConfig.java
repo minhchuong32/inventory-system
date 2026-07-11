@@ -49,10 +49,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
-                                .requestMatchers("/suppliers", "/auth/**", "/api/auth/**", "/users", "/search",
+                                .requestMatchers("/", "/login", "/suppliers", "/auth/**", "/api/auth/**", "/users", "/search",
                                         "/search/**",
                                         "/search/room-type/filter", "/search/room-type/filter/**",
-                            "/payments/call-back", "/health")
+                                        "/payments/call-back", "/health")
                                 .permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                                 .requestMatchers("/error", "/access-denied").permitAll()
